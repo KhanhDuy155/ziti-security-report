@@ -69,10 +69,15 @@ Inject the following payload into the roleAttributes field:
 
 Payload: `<img src=1 onerror=alert(document.domain)>`
 
+<img width="1918" height="944" alt="image" src="https://github.com/user-attachments/assets/314820fa-5cc5-4369-9eff-f3611a458f77" />
+
+
 ### Step 3 – Persistence of Payload
 The application stores the malicious roleAttributes value in the database without sanitization.
 
 Verify via GET: `/edge/management/v1/service-role-attributes?limit=100&offset=0&sort=name%20asc`
+
+<img width="1562" height="793" alt="image" src="https://github.com/user-attachments/assets/f491f22a-34d2-46a8-a737-18bdf962e887" />
 
 
 ### Step 4 – Trigger the Stored XSS
@@ -80,9 +85,8 @@ Navigate to the Services list page.
 
 The `alert(document.domain)` dialog appears, showing the target domain "ziti.local", confirming the Stored XSS.
 
-![XSS Alert](evidence/poc-document-domain.png)
+<img width="1914" height="1023" alt="image" src="https://github.com/user-attachments/assets/a9a6aeab-74b1-43ce-8334-4e64763e56cf" />
 
-![Services page](evidence/step3-services-list.png)
 
 Inspecting the DOM shows the injected `<img>` elements rendered as live HTML:
 
