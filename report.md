@@ -102,7 +102,6 @@ A successful exploitation of this vulnerability allows an administrator with man
 Possible impacts include:
 
 - Theft of session cookies or API tokens of another administrator.
-- Execution of privileged actions as the victim administrator.
 - Modification of identities, services, routers, and policies.
 - Persistent injection of malicious content into the ZAC UI.
 - Use of XSS as a pivot point for more advanced attacks.
